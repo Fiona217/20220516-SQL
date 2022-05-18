@@ -1,4 +1,4 @@
---a).Display a list of all property names and their property id’s for Owner Id: 1426. 
+--a).Display a list of all property names and their property idâ€™s for Owner Id: 1426. 
 USE [Keys]
 SELECT [Id], [Name], [Description]
 FROM [dbo].[Property]
@@ -24,20 +24,22 @@ WHERE a.[Id] IN (
 --2).Display the yield.
 USE [Keys]
 SELECT [TenantId], MAX(ISNULL(c.[FirstName], '') + ' ' + ISNULL(c.[MiddleName], '') + ' ' + ISNULL(c.[LastName], '')) AS TenantName, 
-       [PropertyId], MAX(b.[Name]) AS [PropertyName], [StartDate], [EndDate], [PaymentFrequencyId], [PaymentAmount], 
+       a.[PropertyId], MAX(b.[Name]) AS [PropertyName], [StartDate], [EndDate], [PaymentFrequencyId], [PaymentAmount], 
 	CASE WHEN [PaymentFrequencyId]=1 THEN SUM(DATEDIFF(WEEK, [StartDate], [EndDate])*[PaymentAmount]) 
 		 WHEN [PaymentFrequencyId]=2 THEN SUM(DATEDIFF(WEEK, [StartDate], [EndDate])/2*[PaymentAmount])		 
 		 WHEN [PaymentFrequencyId]=3 THEN SUM(ROUND(CAST(DATEDIFF(DAY, [StartDate], [EndDate]) AS decimal(5,2))/30, 0)*[PaymentAmount])
-	END as [PaymentAmountTotal]
+	END as [PaymentAmountTotal],
+	d.[Yield]
 FROM [dbo].[tenantproperty] a
 LEFT JOIN [dbo].[property] b ON b.[Id]=a.[PropertyId]
 LEFT JOIN [dbo].[Person] c ON c.[Id]=a.[TenantId]
-WHERE [PropertyId] IN (
+LEFT JOIN [dbo].[PropertyFinance] d ON d.[PropertyId]=a.[PropertyId]
+WHERE a.[PropertyId] IN (
 	SELECT [PropertyId]
 	FROM [dbo].[OwnerProperty]
 	WHERE [OwnerId]=1426
 )
-GROUP BY [TenantId], [PropertyId], [StartDate], [EndDate], [PaymentFrequencyId], [PaymentAmount]
+GROUP BY [TenantId], a.[PropertyId], [StartDate], [EndDate], [PaymentFrequencyId], [PaymentAmount], d.[Yield]
 /*
 Notes:
 According to the DATEDIFF function, there are 12 months from 2017-12-31 to 2018-12-31, but 11 months from 2018-1-1 to 2018-12-31. This is different from real life. 
