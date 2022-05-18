@@ -54,6 +54,11 @@ USE [Keys]
 SELECT *
 FROM [dbo].[Job]
 where [JobStatusId]=1
+and [OwnerId] IN (
+	SELECT [Id]
+	FROM [dbo].[Person]
+	WHERE [IsActive]=1
+)
 
 --e).Display all property names, current tenants first and last names and rental payments per week/ fortnight/month for the properties in question a). 
 USE [Keys]
