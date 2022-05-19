@@ -51,10 +51,10 @@ I think it should be setup base on the company's rules.
  
 --d).Display all the jobs available
 USE [Keys]
-SELECT distinct a.[Id] AS [JobId], a.[PropertyId], a.[OwnerId], a.[JobDescription], c.[Status] AS [JobStatus]
+SELECT distinct a.[Id] AS [JobId], a.[PropertyId], a.[OwnerId], a.[JobDescription]
 FROM [dbo].[Job] a
-INNER JOIN [dbo].[Person] b ON b.[Id]=a.[OwnerId] AND b.[IsActive]=1
-INNER JOIN [dbo].[JobStatus] c ON c.[Id]=a.[JobStatusId] AND c.[Id]=1
+INNER JOIN [dbo].[JobMedia] b ON b.[JobId]=a.[Id] AND b.[IsActive]=1
+
 
 --e).Display all property names, current tenants first and last names and rental payments per week/ fortnight/month for the properties in question a). 
 USE [Keys]
